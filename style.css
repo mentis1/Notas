@@ -1,0 +1,690 @@
+:root {
+    /* Paleta de colores más refinada */
+    --color-primary: #007AFF; /* Azul principal de Apple, para botones y acentos */
+    --color-secondary: #5AC8FA; /* Azul claro para elementos secundarios o resaltados */
+    --color-text-dark: #1C1C1E; /* Texto principal oscuro */
+    --color-text-light: #F2F2F7; /* Texto principal claro */
+    --color-text-subtle: #8E8E93; /* Gris para texto secundario o descriptivo */
+    --color-background-light: #F2F2F7; /* Fondo general de la app en modo claro */
+    --color-card-background-light: #FFFFFF; /* Fondo de tarjetas y inputs en modo claro */
+    --color-border-light: #E5E5EA; /* Borde sutil en modo claro */
+    --color-red: #FF3B30; /* Rojo vibrante para acciones destructivas */
+
+    /* Colores para el modo oscuro */
+    --color-background-dark: #1C1C1E; /* Fondo general de la app en modo oscuro */
+    --color-card-background-dark: #2C2C2E; /* Fondo de tarjetas y inputs en modo oscuro */
+    --color-border-dark: #3A3A3C; /* Borde sutil en modo oscuro */
+
+    /* Sombras */
+    --shadow-light-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-light-md: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+    --shadow-light-lg: 0 10px 20px rgba(0, 0, 0, 0.15), 0 5px 10px rgba(0, 0, 0, 0.1);
+
+    --shadow-dark-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-dark-md: 0 4px 8px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-dark-lg: 0 10px 20px rgba(0, 0, 0, 0.6), 0 5px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* Estilos generales */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--color-background-light);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
+    color: var(--color-text-dark);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Modo oscuro */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: var(--color-background-dark);
+        color: var(--color-text-light);
+    }
+    .iphone-frame {
+        background-color: var(--color-background-dark);
+    }
+    .navbar {
+        background-color: var(--color-background-dark);
+        border-bottom-color: var(--color-border-dark);
+        box-shadow: var(--shadow-dark-md);
+    }
+    h1 {
+        color: var(--color-text-light);
+    }
+    .add-icon-button {
+        background-color: var(--color-primary); /* Mantener el azul vibrante */
+    }
+    .input-section {
+        background-color: var(--color-background-dark);
+        border-bottom-color: var(--color-border-dark);
+        box-shadow: var(--shadow-dark-sm);
+    }
+    .input-field {
+        background-color: var(--color-card-background-dark);
+        color: var(--color-text-light);
+        border-color: var(--color-border-dark);
+    }
+    .input-field::placeholder {
+        color: var(--color-text-subtle);
+    }
+    .add-note-form-button {
+        background-color: var(--color-primary);
+        color: var(--color-text-light);
+    }
+    .cancel-note-form-button {
+        background-color: var(--color-text-subtle); /* Gris más oscuro en modo oscuro */
+        color: var(--color-text-light);
+    }
+    .note-list-wrapper {
+        background-color: var(--color-background-dark);
+    }
+    .note-card {
+        background-color: var(--color-card-background-dark);
+        box-shadow: var(--shadow-dark-lg); /* Sombra más pronunciada en oscuro */
+}
+    .note-card-title {
+        color: var(--color-text-light);
+    }
+    .note-card-content {
+        color: var(--color-text-subtle);
+    }
+    .full-note-overlay {
+        background-color: rgba(0, 0, 0, 0.85); /* Fondo semi-transparente oscuro */
+    }
+    .full-note-content {
+        background-color: var(--color-background-dark);
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+    }
+    .full-note-textarea {
+        background-color: var(--color-card-background-dark); /* Fondo del textarea en modo oscuro */
+        color: var(--color-text-light);
+        border-color: var(--color-border-dark); /* Borde al enfocar/editar */
+    }
+    .full-note-textarea:focus {
+        border-color: var(--color-secondary); /* Azul claro para enfoque en oscuro */
+    }
+    
+    /* Contenedor de botones en horizontal */
+    .full-note-buttons-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    
+    .full-note-buttons-container > div {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .close-full-note-button, .edit-full-note-button, .save-edit-button {
+        color: var(--color-secondary); /* Azul claro para iconos de acción en oscuro */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .delete-full-note-button {
+        color: var(--color-red);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Modal para modo oscuro */
+    .modal-content {
+        background-color: var(--color-card-background-dark);
+        box-shadow: var(--shadow-dark-md);
+    }
+    .modal-message {
+        color: var(--color-text-light);
+    }
+    .modal-button.confirm {
+        background-color: var(--color-primary);
+        color: var(--color-text-light);
+    }
+    .modal-button.cancel {
+        background-color: var(--color-text-subtle);
+        color: var(--color-text-light);
+    }
+}
+
+/* Contenedor principal */
+.iphone-frame {
+    width: 100%;
+    max-width: 1850px; /* Reducido ligeramente para un aspecto más contenido */
+    height: 100vh;
+    background-color: var(--color-background-light);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px; /* Bordes redondeados para el frame principal */
+    box-shadow: var(--shadow-light-lg); /* Sombra principal del frame */
+}
+
+/* Barra de navegación (Header) */
+.navbar {
+    background-color: var(--color-background-light);
+    border-bottom: 1px solid var(--color-border-light); /* Borde más definido */
+    padding-top: calc(constant(safe-area-inset-top) + 20px);
+    padding-top: calc(env(safe-area-inset-top) + 20px);
+    padding-bottom: 15px; /* Más espacio */
+    padding-left: 50px;
+    padding-right: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    position: relative;
+    z-index: 10;
+    box-shadow: var(--shadow-light-sm); /* Sombra sutil debajo de la navbar */
+}
+
+/* Contenedor del título */
+.navbar-title-group {
+    display: flex;
+    align-items: flex-end; /* Alineación al final para el título */
+    margin-bottom: 0;
+}
+
+h1 {
+    font-size: 40px; /* Título más grande */
+    font-weight: 700;
+    margin: 0;
+    padding: 0;
+    line-height: 1; /* Asegura que el título no tenga espacio extra */
+    color: var(--color-text-dark);
+}
+
+/* Botón Añadir Nota */
+.add-icon-button {
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: 12px; /* Más redondeado */
+    padding: 10px 18px; /* Más padding */
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--color-text-light);
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, transform 0.15s cubic-bezier(0.2, 0.8, 0.4, 1.2), box-shadow 0.2s ease; /* Transición con bounce */
+    -webkit-appearance: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--shadow-light-sm); /* Sombra para el botón */
+}
+
+.add-icon-button:active {
+    transform: scale(0.95);
+    background-color: #0068cc; /* Un poco más oscuro al presionar */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Campos de entrada (textarea para la nota) */
+.input-section {
+    padding: 25px; /* Más padding */
+    background-color: var(--color-card-background-light); /* Fondo blanco */
+    border-bottom: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-light-sm); /* Sombra sutil */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    position: relative;
+    z-index: 5;
+    transition: all 0.3s ease-in-out;
+}
+
+.hidden-form {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 0;
+    overflow: hidden;
+    border-bottom: none;
+}
+
+.input-field {
+    width: 100%;
+    padding: 18px; /* Más padding */
+    border: 1px solid var(--color-border-light);
+    border-radius: 12px; /* Más redondeado */
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--color-text-dark);
+    background-color: var(--color-card-background-light);
+    -webkit-appearance: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    resize: vertical;
+    min-height: 90px;
+    max-height: 250px;
+}
+
+.input-field:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.25); /* Sombra de enfoque más suave */
+    outline: none;
+}
+
+.form-buttons-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px; /* Más espacio entre botones */
+    margin-top: 10px;
+}
+
+.add-note-form-button,
+.cancel-note-form-button {
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 22px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text-light);
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, transform 0.15s cubic-bezier(0.2, 0.8, 0.4, 1.2), box-shadow 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--shadow-light-sm);
+}
+
+.cancel-note-form-button {
+    background-color: var(--color-text-subtle);
+}
+
+.add-note-form-button:active,
+.cancel-note-form-button:active {
+    transform: scale(0.95);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Lista de notas (grid de miniaturas) */
+.note-list-wrapper {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 25px 45px; /* Más padding */
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    background-color: var(--color-background-light);
+}
+
+.note-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Miniaturas un poco más grandes */
+    gap: 20px; /* Más espacio entre miniaturas */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Tarjeta de nota (miniatura) */
+.note-card {
+    background-color: var(--color-card-background-light);
+    padding: 20px;
+    border-radius: 18px; /* Más redondeado */
+    box-shadow: var(--shadow-light-lg); /* Sombra pronunciada y suave */
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    height: 220px; /* Altura fija para las miniaturas */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.note-card:active {
+    transform: translateY(2px) scale(0.98); /* Ligero hundimiento y escala */
+    box-shadow: 0 4px 10px rgba(0, 122, 255, 0.4); /* Sombra al hacer clic */
+}
+
+.note-card-title {
+    font-size: 18px; /* Título más grande */
+    font-weight: 700;
+    margin-bottom: 8px; /* Más espacio */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--color-text-dark);
+}
+
+.note-card-content {
+    font-size: 15px; /* Contenido un poco más grande */
+    color: var(--color-text-subtle);
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 6; /* Limita a 6 líneas */
+    -webkit-box-orient: vertical;
+    line-height: 1.5; /* Más espacio entre líneas */
+}
+
+/* Vista de nota en pantalla completa */
+.full-note-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.65); /* Fondo semi-transparente más oscuro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(8px); /* Más desenfoque */
+    -webkit-backdrop-filter: blur(8px);
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.full-note-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.full-note-content {
+    background-color: var(--color-card-background-light);
+    border-radius: 25px; /* Más redondeado */
+    padding: 30px; /* Más padding */
+    width: 90%;
+    max-width: 800px; /* Más ancho máximo */
+    height: 85%; /* Más alto */
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-light-lg); /* Sombra pronunciada */
+    position: relative;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.4, 1.2), opacity 0.4s ease; /* Transición con bounce */
+    transform: translateY(50px);
+    opacity: 0;
+}
+
+.full-note-overlay:not(.hidden) .full-note-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.full-note-buttons-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px; /* Más espacio */
+    position: relative; /* Ajustado para que los botones se queden en el flujo */
+    top: 0; left: 0; right: 0; /* Asegura que no se salgan del padding */
+    margin-bottom: 10px; /* Espacio entre botones y texto */
+}
+
+.close-full-note-button, .delete-full-note-button, .edit-full-note-button, .save-edit-button {
+    background: none;
+    border: none;
+    font-size: 19px; /* Iconos un poco más grandes */
+    color: var(--color-primary);
+    cursor: pointer;
+    padding: 8px 12px; /* Más padding para los botones */
+    transition: color 0.2s ease, transform 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    border-radius: 8px; /* Bordes redondeados para el hover/active */
+}
+
+.delete-full-note-button {
+    color: var(--color-red);
+}
+
+.close-full-note-button:hover, .edit-full-note-button:hover, .save-edit-button:hover {
+    background-color: rgba(0, 122, 255, 0.08); /* Fondo sutil al pasar el ratón */
+}
+.delete-full-note-button:hover {
+    background-color: rgba(255, 59, 48, 0.08);
+}
+
+.close-full-note-button:active, .delete-full-note-button:active, .edit-full-note-button:active, .save-edit-button:active {
+    transform: scale(0.95);
+    background-color: rgba(0, 122, 255, 0.15); /* Fondo más fuerte al presionar */
+}
+.delete-full-note-button:active {
+    background-color: rgba(255, 59, 48, 0.15);
+}
+
+.full-note-textarea {
+    flex-grow: 1;
+    margin-top: 0; /* Ajustado por el nuevo contenedor de botones */
+    border: 1px solid transparent; /* Borde transparente por defecto */
+    background-color: transparent;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 18px; /* Texto más grande */
+    line-height: 1.6; /* Más espacio entre líneas */
+    color: var(--color-text-dark);
+    resize: none;
+    outline: none;
+    padding: 10px; /* Padding interno */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px; /* Para el borde de enfoque */
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.full-note-textarea[readonly] {
+    cursor: default; /* Cursor normal cuando es de solo lectura */
+    background-color: transparent;
+}
+
+.full-note-textarea:focus:not([readonly]) {
+    border-color: var(--color-primary); /* Borde al editar */
+    background-color: var(--color-card-background-light); /* Fondo al editar */
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+}
+
+
+/* Cuadro de mensaje (toast) */
+.message-box {
+    position: fixed;
+    bottom: 40px; /* Más arriba */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.75); /* Fondo más oscuro */
+    color: var(--color-white);
+    padding: 14px 25px; /* Más padding */
+    border-radius: 10px; /* Más redondeado */
+    font-size: 16px;
+    text-align: center;
+    z-index: 1001;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    box-shadow: var(--shadow-dark-sm);
+}
+
+.message-box.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Estilos del modal de confirmación */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75); /* Fondo más oscuro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    backdrop-filter: blur(10px); /* Más desenfoque */
+    -webkit-backdrop-filter: blur(10px);
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.modal-content {
+    background-color: var(--color-card-background-light);
+    padding: 35px; /* Más padding */
+    border-radius: 20px; /* Más redondeado */
+    box-shadow: var(--shadow-light-lg); /* Sombra pronunciada */
+    text-align: center;
+    width: 90%;
+    max-width: 450px; /* Más ancho máximo */
+    transform: translateY(30px);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.4, 1.2), opacity 0.4s ease;
+}
+
+.modal-overlay:not(.hidden) .modal-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.modal-message {
+    font-size: 20px; /* Mensaje más grande */
+    margin-bottom: 30px; /* Más espacio */
+    color: var(--color-text-dark);
+    font-weight: 500;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.modal-button {
+    border: none;
+    border-radius: 12px;
+    padding: 14px 30px; /* Más padding */
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, transform 0.15s cubic-bezier(0.2, 0.8, 0.4, 1.2), box-shadow 0.2s ease;
+    box-shadow: var(--shadow-light-sm);
+}
+
+.modal-button.confirm {
+    background-color: var(--color-primary);
+    color: var(--color-text-light);
+}
+
+.modal-button.cancel {
+    background-color: var(--color-text-subtle);
+    color: var(--color-text-light);
+}
+
+.modal-button:active {
+    transform: scale(0.95);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Media Queries para responsividad */
+@media (max-width: 768px) {
+    .iphone-frame {
+        border-radius: 0; /* Sin bordes redondeados en pantallas pequeñas */
+        box-shadow: none; /* Sin sombra principal */
+    }
+    .navbar {
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-top: calc(constant(safe-area-inset-top) + 15px);
+        padding-top: calc(env(safe-area-inset-top) + 15px);
+    }
+    h1 {
+        font-size: 32px;
+    }
+    .add-icon-button {
+        font-size: 15px;
+        padding: 8px 14px;
+        gap: 6px;
+    }
+    .input-section {
+        padding: 20px;
+    }
+    .input-field {
+        padding: 15px;
+        font-size: 16px;
+        min-height: 80px;
+        max-height: 180px;
+    }
+    .add-note-form-button, .cancel-note-form-button {
+        padding: 10px 18px;
+        font-size: 15px;
+        gap: 6px;
+    }
+    .note-list-wrapper {
+        padding: 15px;
+    }
+    .note-list {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+    }
+    .note-card {
+        height: 180px;
+        padding: 15px;
+    }
+    .note-card-title {
+        font-size: 16px;
+    }
+    .note-card-content {
+        font-size: 14px;
+        -webkit-line-clamp: 5;
+    }
+    .full-note-content {
+        width: 95%;
+        padding: 25px;
+        height: 90%; /* Más alto en móviles */
+    }
+    .full-note-buttons-container {
+        justify-content: space-around; /* Distribute space evenly, or flex-start if you prefer left-aligned */
+        padding: 0 5px; /* Add some horizontal padding to prevent elements from touching the edges */
+        flex-wrap: wrap; /* Keep wrapping, but adjust spacing */
+        padding-bottom: 10px; /* Original padding-bottom */
+    }
+    .full-note-buttons-container > div {
+        flex-grow: 1; /* Allow them to grow and shrink */
+        justify-content: center; /* Center the buttons within their flex item */
+        gap: 8px; /* Slightly adjust gap if needed */
+    }
+    .close-full-note-button, .delete-full-note-button, .edit-full-note-button, .save-edit-button {
+        font-size: 16px; /* Slightly reduce font size for smaller screens */
+        padding: 8px 10px; /* Adjust padding to make buttons more compact */
+        gap: 4px; /* Reduce gap between icon and text */
+    }
+    .full-note-textarea {
+        font-size: 17px;
+        line-height: 1.5;
+        padding: 8px;
+    }
+    .modal-content {
+        padding: 25px;
+        max-width: 350px;
+    }
+    .modal-message {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+    .modal-button {
+        padding: 10px 22px;
+        font-size: 15px;
+    }
+}
