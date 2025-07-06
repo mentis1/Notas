@@ -2,76 +2,74 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Notas</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="iphone-frame">
-        <header class="navbar">
-            <div class="navbar-title-group">
-                <h1>Notas</h1>
-            </div>
-            <button id="toggleFormButton" class="add-icon-button">
-                <i class="fas fa-plus"></i> Añadir Nota
-            </button>
-        </header>
 
-        <section id="noteFormContainer" class="input-section hidden-form">
-            <textarea id="noteInput" class="input-field" placeholder="Escribe tu nueva nota aquí..."></textarea>
-            <div class="form-buttons-container">
-                <button id="saveNoteButton" class="add-note-form-button">
-                    <i class="fas fa-save"></i> Guardar Nota
-                </button>
-                <button id="cancelNoteButton" class="cancel-note-form-button">
-                    <i class="fas fa-times"></i> Cancelar
-                </button>
-            </div>
-        </section>
+<body class="font-inter bg-gray-100 py-8 px-4">
 
-        <div id="noteListWrapper" class="note-list-wrapper">
-            <div id="noteList" class="note-list">
-                </div>
+    <div id="login-container" class="apple-card">
+        <h2 class="login-title">Control</h2>
+        <input type="password" id="password-input" placeholder="Introduce PIN" maxlength="4" readonly>
+        <p id="login-message" class="error"></p>
+        <div id="numeric-keypad">
+            <button class="keypad-button">1</button>
+            <button class="keypad-button">2</button>
+            <button class="keypad-button">3</button>
+            <button class="keypad-button">4</button>
+            <button class="keypad-button">5</button>
+            <button class="keypad-button">6</button>
+            <button class="keypad-button">7</button>
+            <button class="keypad-button">8</button>
+            <button class="keypad-button">9</button>
+            <button class="keypad-button clear-button">CLR</button>
+            <button class="keypad-button">0</button>
+            <button class="keypad-button enter-button">ENT</button>
+        </div>
+    </div>
+    <div id="app-container" class="main-container mx-auto hidden">
+         <button id="logout-button" class="logout-button">Salir</button>
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Mis Preocupaciones
+        </h1>
+
+        <div class="mb-6">
+            <label for="worryInput" class="block text-gray-700 text-sm font-semibold mb-2">¿Qué me preocupa?</label>
+            <textarea id="worryInput"
+                      class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                      placeholder="Escribe aquí lo que te ronda la cabeza..."></textarea>
         </div>
 
-        <div id="fullNoteView" class="full-note-overlay hidden">
-    <div class="full-note-content">
-        <div class="full-note-buttons-container">
-            <div class="full-note-buttons-left">
-                <button id="closeFullNoteButton" class="close-full-note-button">
-                    <i class="fas fa-arrow-left"></i> Volver
-                </button>
-            </div>
-            <div class="full-note-buttons-right" style="display: flex; gap: 10px;">
-                <button id="editFullNoteButton" class="edit-full-note-button">
-                    <i class="fas fa-edit"></i> Editar
-                </button>
-                <button id="saveEditButton" class="save-edit-button hidden">
-                    <i class="fas fa-check"></i> Guardar Cambios
-                </button>
-                <button id="deleteFullNoteButton" class="delete-full-note-button">
-                    <i class="fas fa-trash-alt"></i> Eliminar
-                </button>
-            </div>
+        <div class="mb-6">
+            <label for="worstCaseInput" class="block text-gray-700 text-sm font-semibold mb-2">¿Qué es lo peor que puede pasar?</label>
+            <textarea id="worstCaseInput"
+                      class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                      placeholder="Imagina el peor escenario posible..."></textarea>
         </div>
-        <textarea id="fullNoteText" class="full-note-textarea" readonly></textarea>
-    </div>
-</div>
 
-        <div id="messageBox" class="message-box"></div>
-    </div>
+        <div class="mb-6">
+            <label for="solutionInput" class="block text-gray-700 text-sm font-semibold mb-2">Posible Solución</label>
+            <textarea id="solutionInput"
+                      class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+                      placeholder="Piensa en qué podrías hacer para resolverlo o manejarlo..."></textarea>
+        </div>
 
-    <div id="confirmationModal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <p id="modalMessage"></p>
-            <div class="modal-buttons">
-                <button id="modalConfirmButton" class="modal-button confirm">Sí</button>
-                <button id="modalCancelButton" class="modal-button cancel">No</button>
+        <div class="mb-6">
+            <label class="block text-gray-700 text-sm font-semibold mb-2">¿Lo controlas tú?</label>
+            <div class="flex gap-4">
+                <button id="controlYesBtn" class="control-button yes-button w-1/2 action-button">Sí</button>
+                <button id="controlNoBtn" class="control-button no-button w-1/2 action-button">No</button>
             </div>
+            <input type="hidden" id="controlInput" value="">
+        </div>
+        <button id="addWorryBtn" class="add-button w-full action-button">Añadir Preocupación</button>
+        <button id="cancelEditBtn" class="cancel-button w-full action-button mt-2 hidden">Cancelar Edición</button>
+
+        <h2 class="text-2xl font-bold text-gray-800 mt-8 mb-4">Mis Preocupaciones Anotadas</h2>
+        <div id="worriesList" class="space-y-4">
+            <p id="noWorriesMessage" class="text-gray-500 text-center">Aún no hay preocupaciones anotadas. ¡Añade una!</p>
         </div>
     </div>
 

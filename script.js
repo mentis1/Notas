@@ -1,258 +1,245 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Referencias a elementos del DOM
-    const toggleFormButton = document.getElementById('toggleFormButton');
-    const noteFormContainer = document.getElementById('noteFormContainer');
-    const noteInput = document.getElementById('noteInput');
-    const saveNoteButton = document.getElementById('saveNoteButton');
-    const cancelNoteButton = document.getElementById('cancelNoteButton');
-    const noteList = document.getElementById('noteList');
-    const messageBox = document.getElementById('messageBox');
-    const fullNoteView = document.getElementById('fullNoteView');
-    const fullNoteText = document.getElementById('fullNoteText');
-    const closeFullNoteButton = document.getElementById('closeFullNoteButton');
-    const deleteFullNoteButton = document.getElementById('deleteFullNoteButton');
-    const editFullNoteButton = document.getElementById('editFullNoteButton'); // Nuevo botón de edición
-    const saveEditButton = document.getElementById('saveEditButton'); // Nuevo botón para guardar edición
+// Referencias a elementos del DOM (Login)
+const loginContainer = document.getElementById('login-container');
+const appContainer = document.getElementById('app-container');
+const passwordInput = document.getElementById('password-input');
+const loginMessage = document.getElementById('login-message');
+const numericKeypad = document.getElementById('numeric-keypad');
+const logoutButton = document.getElementById('logout-button');
 
-    // Referencias a elementos del modal de confirmación
-    const confirmationModal = document.getElementById('confirmationModal');
-    const modalMessage = document.getElementById('modalMessage');
-    const modalConfirmButton = document.getElementById('modalConfirmButton');
-    const modalCancelButton = document.getElementById('modalCancelButton');
+const CORRECT_PIN = "1813";
+let enteredPin = "";
 
-    // Array para almacenar las notas
-    let notes = [];
-    // Variable para almacenar el ID de la nota que se está viendo en pantalla completa
-    let currentNoteId = null;
+// Lógica de Login
+function updatePasswordInput() {
+    passwordInput.value = "*".repeat(enteredPin.length);
+    if (enteredPin.length === 0 && !loginMessage.textContent) {
+        passwordInput.placeholder = "Introduce PIN";
+    } else if (loginMessage.textContent) {
+        passwordInput.placeholder = "";
+    }
+}
 
-    // Variable global para resolver la promesa del modal de confirmación
-    let resolveModalPromise;
-
-    /**
-     * Muestra un mensaje temporal en la pantalla (como un "toast").
-     * @param {string} message - El mensaje a mostrar.
-     */
-    function showMessage(message) {
-        messageBox.textContent = message;
-        messageBox.classList.add('show');
+function checkPin() {
+    if (enteredPin === CORRECT_PIN) {
+        loginContainer.classList.add('hidden');
+        appContainer.classList.remove('hidden');
+        enteredPin = "";
+        updatePasswordInput();
+        loginMessage.textContent = "";
+        loadWorries(); // Load worries when successfully logged in
+    } else {
+        loginMessage.textContent = "PIN Incorrecto";
+        enteredPin = "";
+        updatePasswordInput();
         setTimeout(() => {
-            messageBox.classList.remove('show');
-        }, 2000); // El mensaje desaparece después de 2 segundos
+            loginMessage.textContent = "";
+            updatePasswordInput();
+        }, 1500);
     }
+}
 
-    /**
-     * Muestra un modal de confirmación personalizado.
-     * @param {string} message - El mensaje a mostrar en el modal.
-     * @returns {Promise<boolean>} - Una promesa que resuelve a true si el usuario confirma, false en caso contrario.
-     */
-    function showConfirmationModal(message) {
-        return new Promise(resolve => {
-            modalMessage.textContent = message;
-            confirmationModal.classList.remove('hidden');
-            resolveModalPromise = resolve; // Almacena la función resolve globalmente
+// Función para cerrar la sesión
+function logout() {
+    appContainer.classList.add('hidden');
+    loginContainer.classList.remove('hidden');
+    enteredPin = "";
+    updatePasswordInput();
+    loginMessage.textContent = "";
+}
 
-            // Configura los event listeners para los botones del modal
-            // Se limpian después de cada uso para evitar múltiples llamadas si el modal se reutiliza rápidamente
-            modalConfirmButton.onclick = () => {
-                confirmationModal.classList.add('hidden');
-                resolveModalPromise(true);
-                modalConfirmButton.onclick = null; // Limpiar handler
-                modalCancelButton.onclick = null; // Limpiar handler
-            };
-            modalCancelButton.onclick = () => {
-                confirmationModal.classList.add('hidden');
-                resolveModalPromise(false);
-                modalConfirmButton.onclick = null; // Limpiar handler
-                modalCancelButton.onclick = null; // Limpiar handler
-            };
-        });
-    }
+// Event listener para el teclado numérico
+numericKeypad.addEventListener('click', (event) => {
+    const key = event.target.textContent;
 
-    /**
-     * Carga las notas del almacenamiento local y las renderiza en la UI.
-     */
-    function loadNotes() {
-        const storedNotes = localStorage.getItem('notesAppNotes');
-        if (storedNotes) {
-            notes = JSON.parse(storedNotes);
-        }
-        renderNotes();
-    }
-
-    /**
-     * Guarda las notas en el almacenamiento local del navegador.
-     */
-    function saveNotes() {
-        localStorage.setItem('notesAppNotes', JSON.stringify(notes));
-    }
-
-    /**
-     * Renderiza todas las notas en el contenedor de la lista de notas.
-     * Limpia el contenedor y crea una miniatura para cada nota.
-     */
-    function renderNotes() {
-        noteList.innerHTML = ''; // Limpia la lista existente
-        if (notes.length === 0) {
-            noteList.innerHTML = '<p style="text-align: center; color: var(--color-text-secondary); margin-top: 50px;">No tienes notas aún. <br> ¡Crea una!</p>';
-            return;
-        }
-
-        notes.forEach(note => {
-            const noteCard = document.createElement('div');
-            noteCard.classList.add('note-card');
-            noteCard.dataset.id = note.id; // Guarda el ID de la nota en el elemento DOM
-
-            // Divide el contenido en título y cuerpo (primera línea como título, resto como contenido)
-            const noteContentLines = note.content.split('\n');
-            const title = noteContentLines[0] || 'Nota sin título';
-            // El cuerpo es el resto del contenido, uniendo las líneas con saltos de línea
-            const body = noteContentLines.slice(1).join('\n').trim();
-
-            noteCard.innerHTML = `
-                <h3 class="note-card-title">${title}</h3>
-                <p class="note-card-content">${body}</p>
-            `;
-
-            // Abre la vista de nota completa al hacer clic en la miniatura
-            noteCard.addEventListener('click', () => openFullNoteView(note.id));
-            noteList.appendChild(noteCard);
-        });
-    }
-
-    /**
-     * Abre la vista de nota en pantalla completa con el contenido de la nota seleccionada.
-     * @param {string} id - El ID de la nota a mostrar.
-     */
-    function openFullNoteView(id) {
-        currentNoteId = id;
-        const note = notes.find(n => n.id === id);
-        if (note) {
-            fullNoteText.value = note.content; // Muestra el contenido completo de la nota
-            fullNoteText.setAttribute('readonly', 'true'); // Asegura que el texto sea de solo lectura inicialmente
-            fullNoteView.classList.remove('hidden'); // Muestra la vista completa
-            editFullNoteButton.classList.remove('hidden'); // Muestra el botón de editar
-            saveEditButton.classList.add('hidden'); // Oculta el botón de guardar cambios
-        }
-    }
-
-    /**
-     * Cierra la vista de nota en pantalla completa.
-     */
-    function closeFullNoteView() {
-        fullNoteView.classList.add('hidden'); // Oculta la vista completa
-        currentNoteId = null; // Resetea el ID de la nota actual
-        fullNoteText.value = ''; // Limpia el contenido del textarea
-        fullNoteText.setAttribute('readonly', 'true'); // Asegura que vuelva a ser de solo lectura
-        editFullNoteButton.classList.remove('hidden'); // Asegura que el botón de editar esté visible para la próxima vez
-        saveEditButton.classList.add('hidden'); // Asegura que el botón de guardar esté oculto
-    }
-
-    /**
-     * Agrega una nueva nota al array y al almacenamiento local, luego actualiza la UI.
-     */
-    function addNote() {
-        const noteContent = noteInput.value.trim();
-        if (noteContent) {
-            const newNote = {
-                id: Date.now().toString(), // ID único basado en la marca de tiempo
-                content: noteContent
-            };
-            notes.unshift(newNote); // Añade la nueva nota al principio del array
-            saveNotes();
-            renderNotes();
-            noteInput.value = ''; // Limpia el campo de entrada
-            noteFormContainer.classList.add('hidden-form'); // Oculta el formulario
-            showMessage('Nota guardada correctamente.');
-        } else {
-            showMessage('La nota no puede estar vacía.');
-        }
-    }
-
-    /**
-     * Habilita la edición de la nota en la vista de pantalla completa.
-     */
-    function enableEditMode() {
-        fullNoteText.removeAttribute('readonly'); // Permite la edición del textarea
-        fullNoteText.focus(); // Enfoca el textarea
-        fullNoteText.select(); // Selecciona todo el texto para facilitar la edición
-        editFullNoteButton.classList.add('hidden'); // Oculta el botón de editar
-        saveEditButton.classList.remove('hidden'); // Muestra el botón de guardar cambios
-    }
-
-    /**
-     * Guarda los cambios realizados en la nota en la vista de pantalla completa.
-     */
-    function saveEditedNote() {
-        if (currentNoteId) {
-            const updatedContent = fullNoteText.value.trim();
-            if (updatedContent) {
-                const noteIndex = notes.findIndex(n => n.id === currentNoteId);
-                if (noteIndex !== -1) {
-                    notes[noteIndex].content = updatedContent;
-                    saveNotes();
-                    renderNotes(); // Vuelve a renderizar las miniaturas para actualizar los cambios
-                    showMessage('Nota actualizada correctamente.');
-                    fullNoteText.setAttribute('readonly', 'true'); // Vuelve a poner el textarea en solo lectura
-                    editFullNoteButton.classList.remove('hidden'); // Vuelve a mostrar el botón de editar
-                    saveEditButton.classList.add('hidden'); // Oculta el botón de guardar cambios
-                }
-            } else {
-                showMessage('La nota no puede estar vacía.');
+    if (key) {
+        if (key === 'CLR') {
+            enteredPin = "";
+        } else if (key === 'ENT') {
+            checkPin();
+        } else if (!isNaN(key)) {
+            if (enteredPin.length < 4) {
+                enteredPin += key;
             }
         }
+        updatePasswordInput();
     }
-
-    /**
-     * Elimina una nota del array y del almacenamiento local, luego actualiza la UI.
-     * Utiliza un modal de confirmación personalizado.
-     * @param {string} id - El ID de la nota a eliminar.
-     */
-    async function deleteNote(id) {
-        const userConfirmed = await showConfirmationModal("¿Estás seguro de que quieres eliminar esta nota?");
-        if (userConfirmed) {
-            notes = notes.filter(note => note.id !== id);
-            saveNotes();
-            renderNotes();
-            closeFullNoteView(); // Cierra la vista completa si se eliminó desde allí
-            showMessage('Nota eliminada.');
-        }
-    }
-
-    // Event Listeners
-
-    // Muestra/oculta el formulario al hacer clic en el botón "Añadir Nota"
-    toggleFormButton.addEventListener('click', () => {
-        noteFormContainer.classList.toggle('hidden-form');
-        if (!noteFormContainer.classList.contains('hidden-form')) {
-            noteInput.focus(); // Enfoca el textarea cuando el formulario es visible
-        }
-    });
-
-    // Guarda la nota al hacer clic en el botón "Guardar Nota"
-    saveNoteButton.addEventListener('click', addNote);
-
-    // Cancela la creación de la nota y oculta el formulario
-    cancelNoteButton.addEventListener('click', () => {
-        noteInput.value = ''; // Limpia el contenido
-        noteFormContainer.classList.add('hidden-form');
-    });
-
-    // Cierra la vista de nota completa
-    closeFullNoteButton.addEventListener('click', closeFullNoteView);
-
-    // Habilita el modo de edición en la vista de nota completa
-    editFullNoteButton.addEventListener('click', enableEditMode);
-
-    // Guarda los cambios de la nota editada
-    saveEditButton.addEventListener('click', saveEditedNote);
-
-    // Elimina la nota actual desde la vista de pantalla completa
-    deleteFullNoteButton.addEventListener('click', () => {
-        if (currentNoteId) {
-            deleteNote(currentNoteId);
-        }
-    });
-
-    // Carga las notas al iniciar la aplicación
-    loadNotes();
 });
+
+// Event Listener para el botón de logout
+logoutButton.addEventListener('click', logout);
+
+
+// --- Lógica de la aplicación de Preocupaciones ---
+
+// Referencias a elementos del DOM (Preocupaciones)
+const worryInput = document.getElementById('worryInput');
+const worstCaseInput = document.getElementById('worstCaseInput');
+const solutionInput = document.getElementById('solutionInput');
+const controlYesBtn = document.getElementById('controlYesBtn'); // Add this
+const controlNoBtn = document.getElementById('controlNoBtn');   // Add this
+const controlInput = document.getElementById('controlInput');   // Add this
+const addWorryBtn = document.getElementById('addWorryBtn');
+const cancelEditBtn = document.getElementById('cancelEditBtn');
+const worriesList = document.getElementById('worriesList');
+const noWorriesMessage = document.getElementById('noWorriesMessage');
+
+let worries = [];
+let editingIndex = -1; // -1 means no item is being edited
+
+// Function to save worries to Local Storage
+function saveWorries() {
+    localStorage.setItem('worries', JSON.stringify(worries));
+}
+
+// Function to load worries from Local Storage
+function loadWorries() {
+    const storedWorries = localStorage.getItem('worries');
+    if (storedWorries) {
+        worries = JSON.parse(storedWorries);
+    }
+    renderWorries();
+}
+
+// Function to render/display worries
+function renderWorries() {
+    worriesList.innerHTML = ''; // Clear current list
+    if (worries.length === 0) {
+        noWorriesMessage.classList.remove('hidden');
+    } else {
+        noWorriesMessage.classList.add('hidden');
+        worries.forEach((worry, index) => {
+            const worryItem = document.createElement('div');
+            worryItem.classList.add('worry-item');
+
+            // Determine the class for the control text based on the stored value
+            const controlClass = worry.control === 'Sí' ? 'worry-item-control-yes' : 'worry-item-control-no';
+            const controlText = worry.control ? `<div class="worry-item-text"><strong>¿Lo controlas tú?:</strong> <span class="${controlClass}">${worry.control}</span></div>` : '';
+
+            worryItem.innerHTML = `
+                <div class="worry-item-header">${worry.worryText}</div>
+                <div class="worry-item-text"><strong>Peor escenario:</strong> ${worry.worstCaseText}</div>
+                <div class="worry-item-text"><strong>Solución:</strong> ${worry.solutionText}</div>
+                ${controlText}
+                <div class="worry-item-actions">
+                    <button class="edit-button action-button" data-index="${index}">Editar</button>
+                    <button class="delete-button action-button" data-index="${index}">Eliminar</button>
+                </div>
+            `;
+            worriesList.appendChild(worryItem);
+        });
+    }
+}
+
+// Function to add or update a worry
+function addOrUpdateWorry() {
+    const worryText = worryInput.value.trim();
+    const worstCaseText = worstCaseInput.value.trim();
+    const solutionText = solutionInput.value.trim();
+    const control = controlInput.value; // Get the value from the hidden input
+
+    if (worryText === '') {
+        alert('Por favor, escribe tu preocupación.');
+        return;
+    }
+
+    if (editingIndex === -1) {
+        // Add new worry
+        worries.push({ worryText, worstCaseText, solutionText, control }); // Include control
+    } else {
+        // Update existing worry
+        worries[editingIndex] = { worryText, worstCaseText, solutionText, control }; // Include control
+        editingIndex = -1; // Reset editing state
+        addWorryBtn.textContent = 'Añadir Preocupación';
+        cancelEditBtn.classList.add('hidden');
+    }
+
+    saveWorries();
+    renderWorries();
+    clearForm();
+}
+
+// Function to clear input fields and button selections
+function clearForm() {
+    worryInput.value = '';
+    worstCaseInput.value = '';
+    solutionInput.value = '';
+    controlInput.value = ''; // Clear the hidden input
+    controlYesBtn.classList.remove('selected'); // Deselect buttons
+    controlNoBtn.classList.remove('selected');   // Deselect buttons
+}
+
+// Function to handle edit button click
+function editWorry(index) {
+    const worryToEdit = worries[index];
+    worryInput.value = worryToEdit.worryText;
+    worstCaseInput.value = worryToEdit.worstCaseText;
+    solutionInput.value = worryToEdit.solutionText;
+    controlInput.value = worryToEdit.control || ''; // Set control value
+
+    // Visually select the correct control button
+    controlYesBtn.classList.remove('selected');
+    controlNoBtn.classList.remove('selected');
+    if (worryToEdit.control === 'Sí') {
+        controlYesBtn.classList.add('selected');
+    } else if (worryToEdit.control === 'No') {
+        controlNoBtn.classList.add('selected');
+    }
+
+    editingIndex = index;
+    addWorryBtn.textContent = 'Guardar Edición';
+    cancelEditBtn.classList.remove('hidden');
+}
+
+// Function to handle delete button click
+function deleteWorry(index) {
+    if (confirm('¿Estás seguro de que quieres eliminar esta preocupación?')) {
+        worries.splice(index, 1);
+        saveWorries();
+        renderWorries();
+    }
+}
+
+// Event listener for adding/updating a worry
+addWorryBtn.addEventListener('click', addOrUpdateWorry);
+
+// Event listener for canceling edit
+cancelEditBtn.addEventListener('click', () => {
+    editingIndex = -1;
+    addWorryBtn.textContent = 'Añadir Preocupación';
+    cancelEditBtn.classList.add('hidden');
+    clearForm(); // This will now also clear the control selection
+});
+
+// Event listeners for the new control buttons
+controlYesBtn.addEventListener('click', () => {
+    controlInput.value = 'Sí';
+    controlYesBtn.classList.add('selected');
+    controlNoBtn.classList.remove('selected');
+});
+
+controlNoBtn.addEventListener('click', () => {
+    controlInput.value = 'No';
+    controlNoBtn.classList.add('selected');
+    controlYesBtn.classList.remove('selected');
+});
+
+// Event delegation for edit and delete buttons
+worriesList.addEventListener('click', (event) => {
+    const target = event.target;
+    if (target.classList.contains('edit-button')) {
+        const index = parseInt(target.dataset.index);
+        editWorry(index);
+    } else if (target.classList.contains('delete-button')) {
+        const index = parseInt(target.dataset.index);
+        deleteWorry(index);
+    }
+});
+
+// Al cargar la página, aseguramos que la pantalla de login esté visible
+// y la app principal oculta inicialmente.
+window.onload = () => {
+    loginContainer.classList.remove('hidden');
+    appContainer.classList.add('hidden');
+    updatePasswordInput();
+    // Worries are loaded only after successful login, so no need to load here on initial page load
+};
